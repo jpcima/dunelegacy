@@ -121,6 +121,18 @@ static int cmd_play(int argc, char *argv[])
         }
     };
 
+    ///
+
+    SDL_AddTimer(1, [](uint32_t interval, void *) -> uint32_t {
+                        SDL_Event event;
+                        memset(&event, 0, sizeof(event));
+                        event.user.type = SDL_USEREVENT;
+                        SDL_PushEvent(&event);
+                        return interval;
+                    }, nullptr);
+
+    ///
+
     ADLPlayer player;
     VGMrecorder vgm;
     MyAdlibLogger logger;
@@ -135,6 +147,10 @@ static int cmd_play(int argc, char *argv[])
     while (!quit && SDL_WaitEvent(&event)) {
         //fprintf(stderr, "Event %d\n", event.type);
         switch (event.type) {
+        case SDL_USEREVENT:
+            if (!player.isMusicPlaying())
+                quit = true;
+            break;
         case SDL_QUIT:
             quit = true;
             break;
