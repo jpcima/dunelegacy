@@ -1,12 +1,15 @@
 
 #include "globals.h"
+#include "vgmrecorder.h"
 #include "FileClasses/music/MusicPlayer.h"
 #include "FileClasses/music/ADLPlayer.h"
 #include "FileClasses/adl/sound_adlib.h"
 #include "FileClasses/FileManager.h"
 #include "FileClasses/INIFile.h"
 #include <getopt.h>
+#include <chrono>
 #include <cstdio>
+namespace cro = std::chrono;
 
 struct MusicDefinition {
     MUSICTYPE type;
@@ -94,16 +97,28 @@ static int cmd_play(int argc, char *argv[])
 
     Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_S16SYS, 2, 4096);
 
-    ADLPlayer player;
-
     class MyAdlibLogger : public AdlibLogger {
     public:
+        VGMrecorder *vgm_ = nullptr;
+        bool vgmHaveLoggedFirstReg_ = false;
+        cro::steady_clock::time_point vgmTimeLastReg;
+
         void logOPL(uint8_t reg, uint8_t val) override {
-            printf("WriteOPL: %02X %02X\n", reg, val);
+            double timestamp = 0;
+            cro::steady_clock::time_point now = cro::steady_clock::now();
+            if (vgmHaveLoggedFirstReg_)
+                timestamp = cro::duration_cast<cro::duration<double>>(now - vgmTimeLastReg).count();
+            // fprintf(stderr, "WriteOPL: %02X %02X @ %f\n", reg, val, timestamp);
+            vgm_->writeReg(timestamp, reg, val);
+            vgmHaveLoggedFirstReg_ = true;
+            vgmTimeLastReg = now;
         }
     };
 
+    ADLPlayer player;
+    VGMrecorder vgm;
     MyAdlibLogger logger;
+    logger.vgm_ = &vgm;
     player.setAdlibLogger(&logger);
 
     player.changeMusicTrack(musicTracks[trackNum].type, musicTracks[trackNum].filename, musicTracks[trackNum].musicNum);
@@ -118,6 +133,9 @@ static int cmd_play(int argc, char *argv[])
             break;
         }
     }
+
+    player.setAdlibLogger(nullptr);
+    Mix_CloseAudio();
 
     return 0;
 }

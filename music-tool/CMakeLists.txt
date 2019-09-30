@@ -2,9 +2,13 @@ cmake_minimum_required(VERSION 3.3)
 
 project(dunemusic)
 
+find_package(Threads)
+
 add_executable(dunemusic
   main.cpp
   globals.cpp
+  vgmrecorder.cpp
+  realtime/ring_buffer.cpp
   ../src/FileClasses/adl/sound_adlib.cpp
   ../src/FileClasses/adl/nukedopl3.c
   ../src/FileClasses/adl/surroundopl.cpp
@@ -32,4 +36,5 @@ target_include_directories(dunemusic
 
 target_link_libraries(dunemusic
   PRIVATE SDL2
-  PRIVATE SDL2_mixer)
+  PRIVATE SDL2_mixer
+  PRIVATE ${CMAKE_THREAD_LIBS_INIT})
