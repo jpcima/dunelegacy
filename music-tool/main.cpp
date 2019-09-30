@@ -2,6 +2,7 @@
 #include "globals.h"
 #include "FileClasses/music/MusicPlayer.h"
 #include "FileClasses/music/ADLPlayer.h"
+#include "FileClasses/adl/sound_adlib.h"
 #include "FileClasses/FileManager.h"
 #include "FileClasses/INIFile.h"
 #include <getopt.h>
@@ -94,6 +95,17 @@ static int cmd_play(int argc, char *argv[])
     Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_S16SYS, 2, 1024);
 
     ADLPlayer player;
+
+    class MyAdlibLogger : public AdlibLogger {
+    public:
+        void logOPL(uint8_t reg, uint8_t val) override {
+            printf("WriteOPL: %02X %02X\n", reg, val);
+        }
+    };
+
+    MyAdlibLogger logger;
+    player.setAdlibLogger(&logger);
+
     player.changeMusicTrack(musicTracks[trackNum].type, musicTracks[trackNum].filename, musicTracks[trackNum].musicNum);
 
     SDL_Event event;

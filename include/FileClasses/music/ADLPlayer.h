@@ -27,6 +27,7 @@
 
 // Forward declarations
 class SoundAdlibPC;
+class AdlibLogger;
 
 class ADLPlayer : public MusicPlayer {
 public:
@@ -40,6 +41,8 @@ public:
     void changeMusic(MUSICTYPE musicType) override;
 
     void changeMusicTrack(MUSICTYPE musicType, const std::string &filename, int musicNum);
+
+    void setAdlibLogger(AdlibLogger *logger);
 
     /*!
         Toggle the music on and off
@@ -66,6 +69,7 @@ public:
 
 private:
     SoundAdlibPC* pSoundAdlibPC;
+    AdlibLogger* pAdlibLogger;
 };
 
 #endif // ADLPLAYER_H

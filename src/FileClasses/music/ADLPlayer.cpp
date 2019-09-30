@@ -26,6 +26,7 @@
 
 ADLPlayer::ADLPlayer() : MusicPlayer(settings.audio.playMusic, settings.audio.musicVolume) {
     pSoundAdlibPC = nullptr;
+    pAdlibLogger = nullptr;
 }
 
 ADLPlayer::~ADLPlayer() {
@@ -205,6 +206,7 @@ void ADLPlayer::changeMusicTrack(MUSICTYPE musicType, const std::string &filenam
         sdl2::RWops_ptr rwop = pFileManager->openFile(filename);
 
         pSoundAdlibPC = new SoundAdlibPC(rwop.get());
+        pSoundAdlibPC->setLogger(pAdlibLogger);
         pSoundAdlibPC->setVolume(musicVolume);
 
         pSoundAdlibPC->playTrack(musicNum);
@@ -213,6 +215,14 @@ void ADLPlayer::changeMusicTrack(MUSICTYPE musicType, const std::string &filenam
 
         SDL_Log("Now playing %s!",filename.c_str());
     }
+}
+
+void ADLPlayer::setAdlibLogger(AdlibLogger *logger)
+{
+    pAdlibLogger = logger;
+
+    if (pSoundAdlibPC)
+        pSoundAdlibPC->setLogger(logger);
 }
 
 void ADLPlayer::toggleSound() {

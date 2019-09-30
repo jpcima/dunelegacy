@@ -106,11 +106,12 @@ static inline void debugC(int level, const char *str, ...)
 */
 }
 
-
 class AdlibDriver final {
 public:
     explicit AdlibDriver(int rate);
     ~AdlibDriver();
+
+    AdlibLogger *logger;
 
     AdlibDriver(const AdlibDriver &) = delete;
     AdlibDriver(AdlibDriver &&) = delete;
@@ -478,7 +479,14 @@ private:
     void unlock() {  }
 };
 
-AdlibDriver::AdlibDriver(int rate) {
+class NullAdlibLogger final : public AdlibLogger {
+public:
+    void logOPL(uint8_t reg, uint8_t val) override {}
+};
+
+static NullAdlibLogger nullAdlibLogger;
+
+AdlibDriver::AdlibDriver(int rate) : logger(&nullAdlibLogger) {
     setupOpcodeList();
     setupParserOpcodeTable();
 
@@ -912,6 +920,7 @@ void AdlibDriver::resetAdlibState() {
 
 void AdlibDriver::writeOPL(uint8 reg, uint8 val) const {
     opl->write(reg, val);
+    logger->logOPL(reg, val);
 }
 
 void AdlibDriver::initChannel(Channel &channel) {
@@ -2327,6 +2336,11 @@ SoundAdlibPC::SoundAdlibPC(SDL_RWops* rwop, int freq) : _driver(nullptr), _track
 SoundAdlibPC::~SoundAdlibPC() {
     delete _driver;
     delete[] _soundDataPtr;
+}
+
+void SoundAdlibPC::setLogger(AdlibLogger *logger)
+{
+    _driver->logger = logger ? logger : &nullAdlibLogger;
 }
 
 std::vector<int> SoundAdlibPC::getSubsongs()

@@ -49,6 +49,7 @@
 #include <vector>
 
 class AdlibDriver;
+class AdlibLogger;
 
 /**
  * AdLib implementation of the sound output device.
@@ -68,6 +69,8 @@ public:
     SoundAdlibPC(const SoundAdlibPC& soundAdlibPC) = delete;
     SoundAdlibPC& operator=(const SoundAdlibPC& soundAdlibPC) = delete;
     ~SoundAdlibPC();
+
+    void setLogger(AdlibLogger *logger);
 
     static void callback(void *, Uint8 *, int);
 
@@ -126,6 +129,12 @@ private:
     bool bJustStartedPlaying;
 
     int volume;
+};
+
+class AdlibLogger {
+public:
+    virtual ~AdlibLogger() {}
+    virtual void logOPL(uint8_t reg, uint8_t val) = 0;
 };
 
 #endif
