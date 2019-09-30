@@ -80,8 +80,13 @@ static int cmd_list(int argc, char *argv[])
 
 static int cmd_play(int argc, char *argv[])
 {
-    for (int c; (c = getopt(argc, argv, "")) != -1;) {
+    const char *vgm_path = nullptr;
+
+    for (int c; (c = getopt(argc, argv, "V:")) != -1;) {
         switch (c) {
+        case 'V':
+            vgm_path = optarg;
+            break;
         default:
             return 1;
         }
@@ -119,7 +124,7 @@ static int cmd_play(int argc, char *argv[])
     ADLPlayer player;
     VGMrecorder vgm;
     MyAdlibLogger logger;
-    if (vgm.openOutputFile("track.vgm"))
+    if (vgm_path && vgm.openOutputFile(vgm_path))
         logger.vgm_ = &vgm;
     player.setAdlibLogger(&logger);
 
