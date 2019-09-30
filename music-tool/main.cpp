@@ -92,7 +92,7 @@ static int cmd_play(int argc, char *argv[])
         return 1;
     }
 
-    Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_S16SYS, 2, 1024);
+    Mix_OpenAudio(AUDIO_FREQUENCY, AUDIO_S16SYS, 2, 4096);
 
     ADLPlayer player;
 

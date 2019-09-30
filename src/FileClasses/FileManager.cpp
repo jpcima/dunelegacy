@@ -71,6 +71,7 @@ std::vector<std::string> FileManager::getSearchPath() {
     char tmp[FILENAME_MAX];
     fnkdat("data", tmp, FILENAME_MAX, FNKDAT_USER | FNKDAT_CREAT);
     searchPath.push_back(tmp);
+    searchPath.push_back("./data");
 
     return searchPath;
 }

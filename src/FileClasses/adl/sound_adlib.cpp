@@ -495,9 +495,9 @@ AdlibDriver::AdlibDriver(int rate) : logger(&nullAdlibLogger) {
     _rate = rate;
 
     _flags = 0;
-    Copl *a = new CWemuopl(rate, false);
-    Copl *b = new CWemuopl(rate, false);
-    opl = std::make_unique<CSurroundopl>(a, b, true);
+//    Copl *a = new CWemuopl(rate, false);
+//    Copl *b = new CWemuopl(rate, false);
+    opl = std::make_unique<CWemuopl>(rate, false);
     // CSurroundopl now owns a and b and will free upon destruction
 
     memset(_channels, 0, sizeof(_channels));

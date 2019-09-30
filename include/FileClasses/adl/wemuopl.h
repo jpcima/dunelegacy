@@ -23,6 +23,7 @@
 #define H_ADPLUG_WEMUOPL
 
 #include "opl.h"
+#include <FileClasses/adl/nukedopl3.h>
 extern "C" {
 #include "woodyopl.h"
 }
@@ -31,34 +32,31 @@ class CWemuopl: public Copl
 {
 public:
   CWemuopl(int rate, bool usestereo)
-    : stereo(usestereo), opl(0)
+    : stereo(usestereo)
     {
-      opl.adlib_init(rate);
+      OPL3_Reset(&opl, rate);
       currType = TYPE_OPL2;
     };
 
   void update(short *buf, int samples) override
   {
-      //      if(use16bit) samples *= 2;
-      if(stereo) samples *= 2;
-      opl.adlib_getsample(buf, samples);
-    }
+      OPL3_GenerateStream(&opl, buf, samples);
+  }
 
   // template methods
   void write(int reg, int val) override
   {
       if(currChip != 0)
-    return;
+          return;
 
-      opl.index = reg;
-      opl.adlib_write(opl.index, val, 0);
-    };
+      OPL3_WriteRegBuffered(&opl, reg, val);
+  };
 
   void init() override {};
 
 private:
   bool      stereo;
-  OPLChipClass  opl;
+  opl3_chip opl;
 };
 
 #endif

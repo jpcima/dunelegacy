@@ -6,7 +6,7 @@ add_executable(dunemusic
   main.cpp
   globals.cpp
   ../src/FileClasses/adl/sound_adlib.cpp
-  ../src/FileClasses/adl/woodyopl.cpp
+  ../src/FileClasses/adl/nukedopl3.c
   ../src/FileClasses/adl/surroundopl.cpp
   ../src/FileClasses/music/ADLPlayer.cpp
   ../src/FileClasses/FileManager.cpp
