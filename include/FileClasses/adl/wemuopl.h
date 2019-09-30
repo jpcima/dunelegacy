@@ -36,11 +36,13 @@ public:
     {
       OPL3_Reset(&opl, rate);
       currType = TYPE_OPL2;
-    };
+    }
 
   void update(short *buf, int samples) override
   {
       OPL3_GenerateStream(&opl, buf, samples);
+      for(int i = 0; i < samples * 2; i++)
+          buf[i] *= 4;
   }
 
   // template methods
@@ -50,9 +52,9 @@ public:
           return;
 
       OPL3_WriteRegBuffered(&opl, reg, val);
-  };
+  }
 
-  void init() override {};
+  void init() override {}
 
 private:
   bool      stereo;
