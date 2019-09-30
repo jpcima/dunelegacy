@@ -194,7 +194,7 @@ void VGMrecorder::writeFileRegister(uint8_t reg, uint8_t val, uint32_t delay)
         }
 
         if (f) fwrite(&delaycmd, 1, delaycmdlen, f);
-        bytesWritten_ += 1;
+        bytesWritten_ += delaycmdlen;
         samplesWritten_ += to_copy;
     }
 
