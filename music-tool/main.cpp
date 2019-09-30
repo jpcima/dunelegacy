@@ -7,9 +7,11 @@
 #include "FileClasses/FileManager.h"
 #include "FileClasses/INIFile.h"
 #include <getopt.h>
-#include <chrono>
 #include <cstdio>
-namespace cro = std::chrono;
+
+static_assert(
+    AUDIO_FREQUENCY == 44100,
+    "need to match audio frequency with VGM at 44.1 kHz");
 
 struct MusicDefinition {
     MUSICTYPE type;
@@ -101,17 +103,16 @@ static int cmd_play(int argc, char *argv[])
     public:
         VGMrecorder *vgm_ = nullptr;
         bool vgmHaveLoggedFirstReg_ = false;
-        cro::steady_clock::time_point vgmTimeLastReg;
+        uint32_t vgmTimeLastReg_;
 
-        void logOPL(uint8_t reg, uint8_t val) override {
-            double timestamp = 0;
-            cro::steady_clock::time_point now = cro::steady_clock::now();
+        void logOPL(uint32_t framepos, uint8_t reg, uint8_t val) override {
+            uint32_t delay = 0;
             if (vgmHaveLoggedFirstReg_)
-                timestamp = cro::duration_cast<cro::duration<double>>(now - vgmTimeLastReg).count();
+                delay = framepos - vgmTimeLastReg_;
             // fprintf(stderr, "WriteOPL: %02X %02X @ %f\n", reg, val, timestamp);
-            if (vgm_) vgm_->writeReg(timestamp, reg, val);
+            if (vgm_) vgm_->writeReg(delay, reg, val);
             vgmHaveLoggedFirstReg_ = true;
-            vgmTimeLastReg = now;
+            vgmTimeLastReg_ = framepos;
         }
     };
 

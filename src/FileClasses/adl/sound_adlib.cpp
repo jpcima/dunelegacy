@@ -122,6 +122,8 @@ public:
     int callback(int opcode, ...);
     void callback();
 
+    uint32_t _audioFrameCounter = 0;
+
     // AudioStream API
     int readBuffer(int16 *buffer, const int numSamples) {
         int32 samplesLeft = numSamples;
@@ -143,6 +145,8 @@ public:
             //YM3812UpdateOne(_adlib, buffer, render);
             opl->update(buffer, render);
             buffer += render*2;
+
+            _audioFrameCounter += render;
         }
         return numSamples;
     }
@@ -481,7 +485,7 @@ private:
 
 class NullAdlibLogger final : public AdlibLogger {
 public:
-    void logOPL(uint8_t reg, uint8_t val) override {}
+    void logOPL(uint32_t framePos, uint8_t reg, uint8_t val) override {}
 };
 
 static NullAdlibLogger nullAdlibLogger;
@@ -920,7 +924,7 @@ void AdlibDriver::resetAdlibState() {
 
 void AdlibDriver::writeOPL(uint8 reg, uint8 val) const {
     opl->write(reg, val);
-    logger->logOPL(reg, val);
+    logger->logOPL(_audioFrameCounter, reg, val);
 }
 
 void AdlibDriver::initChannel(Channel &channel) {

@@ -20,7 +20,7 @@ struct QuitMessage : public BufferMessage<MsgCodeQuit> {
 };
 
 struct WriteRegMessage : public BufferMessage<MsgCodeWriteReg> {
-    double timestamp;
+    uint32_t delay;
     uint8_t reg;
     uint8_t val;
 };
@@ -48,10 +48,10 @@ bool VGMrecorder::openOutputFile(const char *path)
     return true;
 }
 
-bool VGMrecorder::writeReg(double timestamp, uint8_t reg, uint8_t val)
+bool VGMrecorder::writeReg(uint32_t delay, uint8_t reg, uint8_t val)
 {
     WriteRegMessage msg;
-    msg.timestamp = timestamp;
+    msg.delay = delay;
     msg.reg = reg;
     msg.val = val;
     return postMessage(msg);
@@ -102,7 +102,7 @@ void VGMrecorder::threadRun()
                     break;
 
                 //fprintf(stderr, "WriteOPL: %02X %02X @ %f\n", msg.reg, msg.val, msg.timestamp);
-                writeFileRegister(msg.reg, msg.val, msg.timestamp);
+                writeFileRegister(msg.reg, msg.val, msg.delay);
                 break;
             }
             }
@@ -152,14 +152,13 @@ void VGMrecorder::terminateFile()
     }
 }
 
-void VGMrecorder::writeFileRegister(uint8_t reg, uint8_t val, double timestamp)
+void VGMrecorder::writeFileRegister(uint8_t reg, uint8_t val, uint32_t delay)
 {
     ensureWriteFileHeader();
 
     FILE *f = file_.get();
 
     // write delay
-    unsigned delay = (unsigned)(0.5 + timestamp * 44100.0);
     while(delay > 0)
     {
         uint16_t to_copy;

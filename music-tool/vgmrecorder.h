@@ -11,7 +11,7 @@ public:
     ~VGMrecorder();
 
     bool openOutputFile(const char *path);
-    bool writeReg(double timestamp, uint8_t reg, uint8_t val);
+    bool writeReg(uint32_t delay, uint8_t reg, uint8_t val);
 
 private:
     template <class T> bool postMessage(const T &msg);
@@ -20,7 +20,7 @@ private:
 
     void ensureWriteFileHeader();
     void terminateFile();
-    void writeFileRegister(uint8_t reg, uint8_t val, double timestamp);
+    void writeFileRegister(uint8_t reg, uint8_t val, uint32_t delay);
 
 private:
     std::thread thread_;

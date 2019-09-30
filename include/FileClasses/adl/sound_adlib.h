@@ -134,7 +134,7 @@ private:
 class AdlibLogger {
 public:
     virtual ~AdlibLogger() {}
-    virtual void logOPL(uint8_t reg, uint8_t val) = 0;
+    virtual void logOPL(uint32_t framePos, uint8_t reg, uint8_t val) = 0;
 };
 
 #endif
