@@ -194,7 +194,7 @@ static void initSettings()
     settings.video.rotateUnitGraphics = myINIFile.getBoolValue("Video","RotateUnitGraphics",false);
     settings.audio.musicType = myINIFile.getStringValue("Audio","Music Type","adl");
     settings.audio.playMusic = myINIFile.getBoolValue("Audio","Play Music", true);
-    settings.audio.musicVolume = myINIFile.getIntValue("Audio","Music Volume", 512);
+    settings.audio.musicVolume = myINIFile.getIntValue("Audio","Music Volume", 400);
     settings.audio.playSFX = myINIFile.getBoolValue("Audio","Play SFX", true);
     settings.audio.sfxVolume = myINIFile.getIntValue("Audio","SFX Volume", 64);
 
