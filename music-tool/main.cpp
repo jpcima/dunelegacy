@@ -109,7 +109,7 @@ static int cmd_play(int argc, char *argv[])
             if (vgmHaveLoggedFirstReg_)
                 timestamp = cro::duration_cast<cro::duration<double>>(now - vgmTimeLastReg).count();
             // fprintf(stderr, "WriteOPL: %02X %02X @ %f\n", reg, val, timestamp);
-            vgm_->writeReg(timestamp, reg, val);
+            if (vgm_) vgm_->writeReg(timestamp, reg, val);
             vgmHaveLoggedFirstReg_ = true;
             vgmTimeLastReg = now;
         }
@@ -118,7 +118,8 @@ static int cmd_play(int argc, char *argv[])
     ADLPlayer player;
     VGMrecorder vgm;
     MyAdlibLogger logger;
-    logger.vgm_ = &vgm;
+    if (vgm.openOutputFile("track.vgm"))
+        logger.vgm_ = &vgm;
     player.setAdlibLogger(&logger);
 
     player.changeMusicTrack(musicTracks[trackNum].type, musicTracks[trackNum].filename, musicTracks[trackNum].musicNum);
