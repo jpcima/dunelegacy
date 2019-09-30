@@ -194,7 +194,7 @@ void ADLPlayer::changeMusic(MUSICTYPE musicType)
     changeMusicTrack(musicType, filename, musicNum);
 }
 
-void ADLPlayer::changeMusicTrack(MUSICTYPE musicType, const std::string &filename, int musicNum)
+void ADLPlayer::changeMusicTrack(MUSICTYPE musicType, const std::string &filename, int musicNum, bool justWriteOpl)
 {
     currentMusicType = musicType;
 
@@ -211,9 +211,17 @@ void ADLPlayer::changeMusicTrack(MUSICTYPE musicType, const std::string &filenam
 
         pSoundAdlibPC->playTrack(musicNum);
 
-        Mix_HookMusic(pSoundAdlibPC->callback, pSoundAdlibPC);
+        if (!justWriteOpl)
+            Mix_HookMusic(pSoundAdlibPC->callback, pSoundAdlibPC);
 
         SDL_Log("Now playing %s!",filename.c_str());
+
+        if (justWriteOpl) {
+            while (pSoundAdlibPC->isPlaying()) {
+                Uint8 buffer[256];
+                SoundAdlibPC::callback(pSoundAdlibPC, buffer, sizeof(buffer));
+            }
+        }
     }
 }
 

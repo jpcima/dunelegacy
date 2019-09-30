@@ -122,14 +122,17 @@ static int cmd_play(int argc, char *argv[])
     };
 
     ///
+    bool justWriteOpl = vgm_path != nullptr;
 
-    SDL_AddTimer(1, [](uint32_t interval, void *) -> uint32_t {
-                        SDL_Event event;
-                        memset(&event, 0, sizeof(event));
-                        event.user.type = SDL_USEREVENT;
-                        SDL_PushEvent(&event);
-                        return interval;
-                    }, nullptr);
+    if (!justWriteOpl) {
+        SDL_AddTimer(1, [](uint32_t interval, void *) -> uint32_t {
+                            SDL_Event event;
+                            memset(&event, 0, sizeof(event));
+                            event.user.type = SDL_USEREVENT;
+                            SDL_PushEvent(&event);
+                            return interval;
+                        }, nullptr);
+    }
 
     ///
 
@@ -140,20 +143,26 @@ static int cmd_play(int argc, char *argv[])
         logger.vgm_ = &vgm;
     player.setAdlibLogger(&logger);
 
-    player.changeMusicTrack(musicTracks[trackNum].type, musicTracks[trackNum].filename, musicTracks[trackNum].musicNum);
+    player.changeMusicTrack(
+        musicTracks[trackNum].type,
+        musicTracks[trackNum].filename,
+        musicTracks[trackNum].musicNum,
+        justWriteOpl);
 
-    SDL_Event event;
-    bool quit = false;
-    while (!quit && SDL_WaitEvent(&event)) {
-        //fprintf(stderr, "Event %d\n", event.type);
-        switch (event.type) {
-        case SDL_USEREVENT:
-            if (!player.isMusicPlaying())
+    if (!justWriteOpl) {
+        SDL_Event event;
+        bool quit = false;
+        while (!quit && SDL_WaitEvent(&event)) {
+            //fprintf(stderr, "Event %d\n", event.type);
+            switch (event.type) {
+            case SDL_USEREVENT:
+                if (!player.isMusicPlaying())
+                    quit = true;
+                break;
+            case SDL_QUIT:
                 quit = true;
-            break;
-        case SDL_QUIT:
-            quit = true;
-            break;
+                break;
+            }
         }
     }
 

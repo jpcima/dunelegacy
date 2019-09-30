@@ -40,7 +40,7 @@ public:
     */
     void changeMusic(MUSICTYPE musicType) override;
 
-    void changeMusicTrack(MUSICTYPE musicType, const std::string &filename, int musicNum);
+    void changeMusicTrack(MUSICTYPE musicType, const std::string &filename, int musicNum, bool justWriteOpl = false);
 
     void setAdlibLogger(AdlibLogger *logger);
 
