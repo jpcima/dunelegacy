@@ -21,6 +21,7 @@
 
 #include <FileClasses/music/MusicPlayer.h>
 
+#include <string>
 #include <vector>
 #include <SDL2/SDL_mixer.h>
 
@@ -37,6 +38,8 @@ public:
         @param musicType type of music to be played
     */
     void changeMusic(MUSICTYPE musicType) override;
+
+    void changeMusicTrack(MUSICTYPE musicType, const std::string &filename, int musicNum);
 
     /*!
         Toggle the music on and off

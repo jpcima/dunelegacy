@@ -190,6 +190,11 @@ void ADLPlayer::changeMusic(MUSICTYPE musicType)
         } break;
     }
 
+    changeMusicTrack(musicType, filename, musicNum);
+}
+
+void ADLPlayer::changeMusicTrack(MUSICTYPE musicType, const std::string &filename, int musicNum)
+{
     currentMusicType = musicType;
 
     if((musicOn == true) && (filename != "")) {
