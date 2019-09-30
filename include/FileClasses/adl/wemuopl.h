@@ -41,8 +41,6 @@ public:
   void update(short *buf, int samples) override
   {
       OPL3_GenerateStream(&opl, buf, samples);
-      for(int i = 0; i < samples * 2; i++)
-          buf[i] *= 4;
   }
 
   // template methods
