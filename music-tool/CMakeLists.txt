@@ -6,6 +6,14 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(Threads)
 
+option(USE_MIXER_X "User SDL Mixer X fork instead of original SDL Mixer" OFF)
+
+if(USE_MIXER_X)
+	set(SDL_MIXER_LIB SDL2_mixer_ext)
+else()
+	set(SDL_MIXER_LIB SDL2_mixer)
+endif()
+
 add_executable(dunemusic
   main.cpp
   globals.cpp
@@ -32,11 +40,15 @@ add_executable(dunemusic
 target_compile_definitions(dunemusic
   PRIVATE "DUNELEGACY_DATADIR=\"${CMAKE_INSTALL_PREFIX}/share/dunelegacy\"")
 
+if(USE_MIXER_X)
+	target_compile_definitions(dunemusic PRIVATE -DUSE_SDL_MIXER_X)
+endif()
+
 target_include_directories(dunemusic
   PRIVATE ../include
   PRIVATE ../src)
 
 target_link_libraries(dunemusic
+  PRIVATE ${SDL_MIXER_LIB}
   PRIVATE SDL2
-  PRIVATE SDL2_mixer
   PRIVATE ${CMAKE_THREAD_LIBS_INIT})

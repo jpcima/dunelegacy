@@ -23,7 +23,11 @@
 
 #include <string>
 #include <vector>
-#include <SDL2/SDL_mixer.h>
+#ifdef USE_SDL_MIXER_X
+#	include <SDL2/SDL_mixer_ext.h>
+#else
+#	include <SDL2/SDL_mixer.h>
+#endif
 
 // Forward declarations
 class SoundAdlibPC;
