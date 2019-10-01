@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.3)
 
 project(dunemusic)
 
+set(CMAKE_CXX_STANDARD 14)
+
 find_package(Threads)
 
 add_executable(dunemusic

@@ -1,4 +1,6 @@
 
+#define SDL_MAIN_HANDLED
+
 #include "globals.h"
 #include "vgmrecorder.h"
 #include "FileClasses/music/MusicPlayer.h"
